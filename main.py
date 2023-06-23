@@ -1,30 +1,35 @@
 import torch
-from pytorch3d.io import IO
-from iopath.common.file_io import PathManager
-from stl_to_obj_converter import convert_binary
-from pytorch3d.structures import Pointclouds
-import torch_geometric
+import torch.nn.functional as F
+from torch_geometric.loader import DataLoader
+from dataset_loader import DatasetLoader
+from config import config
+from model import GCN
 
-stl_file = 'data/sample.STL'
-obj_file = 'data/sample.obj'
+loader = DatasetLoader()
+test_dataset = loader.load(config('test_path'))
+train_dataset = loader.load(config('train_path'))
 
-convert_binary(stl_file, obj_file)
+test_data = DataLoader(test_dataset, batch_size=4, shuffle=True)
+train_data = DataLoader(train_dataset, batch_size=2, shuffle=True)
 
-path_manager = PathManager()
-path_manager.set_logging(False)
-generated_mesh = IO(path_manager=path_manager).load_mesh(obj_file, include_textures=False)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+gcn_model = GCN().to(device)
+data = train_data.dataset[0].to(device)
+optimizer = torch.optim.Adam(gcn_model.parameters(), lr=0.01, weight_decay=5e-4)
 
-vertices = generated_mesh.verts_packed()
-faces = generated_mesh.faces_packed()
+# this is incomplete.
+# need to figureout how to setup the graph to fit into this model
+# alternatively, need to figure out how to calculate the loss and accuracy
+gcn_model.train()
+for epoch in range(200):
+    optimizer.zero_grad()
+    out = gcn_model(data)
+    loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
+    loss.backward()
+    optimizer.step()
 
-# Convert the tensors to PyTorch data types if necessary 
-vertices = vertices.to(torch.float32) 
-faces = faces.to(torch.int64)
-
-graph = torch_geometric.data.Data(pos=vertices, face=faces)
-
-vertices_array = vertices
-if vertices_array.dim() == 2 and vertices_array.size(1) == 3:
-    vertices_array = vertices_array.unsqueeze(0)
-
-point_clouds = Pointclouds(points=vertices_array)
+gcn_model.eval()
+pred = gcn_model(data).argmax(dim=1)
+correct = (pred[data.test_mask] == data.y[data.test_mask]).sum()
+acc = int(correct) / int(data.test_mask.sum())
+print(f'Accuracy: {acc:.4f}')
