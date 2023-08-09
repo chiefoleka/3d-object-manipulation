@@ -1,6 +1,8 @@
 import os
 import sys
 import stl
+import re
+import torch
 from pytorch3d.io import IO
 from iopath.common.file_io import PathManager
 from torch_geometric.data import Data
@@ -121,7 +123,7 @@ class STLConverter:
 
         return obj_filename
     
-    def convert_to_graph(self, obj_file: str):
+    def convert_to_graph(self, obj_file: str, params: dict):
         path_manager = PathManager()
         path_manager.set_logging(False)
         generated_mesh = IO(path_manager=path_manager).load_mesh(obj_file, include_textures=False)
@@ -130,11 +132,16 @@ class STLConverter:
         edges = generated_mesh.edges_packed().t().contiguous()
         verts = generated_mesh.verts_packed()
 
+        # from the params in each directory, get the number in the file
+        param_id = re.findall(r'\d', obj_file)[0]
+        # try this without converting to a long so extra info is not dropped
+        y = torch.tensor(params[param_id]).long()
+
         # the vertice normal that we can add later
         # verts_normal = generated_mesh.verts_normals_packed()
         # faces = generated_mesh.faces_packed()
 
         # x will be the position of each vertex (node)
-        graph = Data(x=verts, edge_index=edges)
+        graph = Data(x=verts, edge_index=edges, y=y)
 
         return graph

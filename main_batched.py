@@ -11,8 +11,8 @@ loader = DatasetLoader()
 test_dataset = loader.load(get_config('test_path'))
 train_dataset = loader.load(get_config('train_path'))
 
-test_data = DataLoader(test_dataset, batch_size=2, shuffle=True)
-train_data = DataLoader(train_dataset, batch_size=4, shuffle=True)
+test_data = DataLoader(test_dataset, batch_size=1, shuffle=True)
+train_data = DataLoader(train_dataset, batch_size=1, shuffle=True)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 gcn_model = GCN(3, 1).to(device)
@@ -32,27 +32,33 @@ mean_eval_loss = []
 for epoch in range(20):
     total_loss = 0
     gcn_model.train()
+
     # Figure out the batch size and loop through a batch here and not all data
-    for data in train_data.dataset:
+    counterTrain = 1
+    counterTest = 1
+    for data in train_data:
         optimizer.zero_grad()
         out = gcn_model(data)
-        # print(f'out[0].shape: {out[0].shape}')
-        # print(f'y.shape: {data.y.shape}')
+
         loss = F.l1_loss(out[0], data.y)
         total_loss = total_loss + loss
         loss.backward()
         optimizer.step()
 
+        counterTrain += 1
+
     eval_loss = 0
     gcn_model.eval()
-    for data in test_data.dataset:
+    for data in test_data:
         pred = gcn_model(data)
         loss = F.l1_loss(pred[0], data.y)
         eval_loss = eval_loss + loss
 
+        counterTest += 1
+
     # save mean loss here
-    mean_loss.append(total_loss / len(train_data.dataset))
-    mean_eval_loss.append(eval_loss / len(test_data.dataset))
+    mean_loss.append(total_loss / counterTrain)
+    mean_eval_loss.append(eval_loss / counterTest)
 
 # plot_loss(mean_loss, 'Training Loss')
 # plot_loss(mean_eval_loss, 'Evaluation Loss')
