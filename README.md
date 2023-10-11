@@ -28,6 +28,7 @@ pip install pytorch3d @ "git+https://github.com/facebookresearch/pytorch3d.git@3
 
 ## Run the project
 ```bash
+python setup.py install
 python main.py
 ```
 
