@@ -22,7 +22,7 @@ class StlToGraph:
         # from the params in each directory, get the number in the file
         param_id = re.findall(r"\d+", obj_file)[0]
         # try this without converting to a long so extra info is not dropped
-        y = torch.tensor(params[param_id]).long()
+        y = torch.tensor(params[param_id]).float()
 
         # the vertice normal that we can add later
         faces = generated_mesh.faces_packed()

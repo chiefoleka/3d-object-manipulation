@@ -12,6 +12,7 @@ class Dataset:
         self.binary_converter = BinaryToObj()
         self.obj_converter = StlToGraph()
         self.y_params = {}
+        self.y_params_normalized = {}
 
         self.min_y = { "x": float("inf"), "y": float("inf"), "z": float("inf") }
         self.max_y = { "x": 0, "y": 0, "z": 0 }
@@ -44,6 +45,8 @@ class Dataset:
             y[0] = (y[0] - self.min_y["x"]) / (self.max_y["x"] - self.min_y["x"])
             y[1] = (y[1] - self.min_y["y"]) / (self.max_y["y"] - self.min_y["y"])
             y[2] = (y[2] - self.min_y["z"]) / (self.max_y["z"] - self.min_y["z"])
+
+            self.y_params_normalized[key] = y
 
     def load(self, directory: str):
         dataset_list = []

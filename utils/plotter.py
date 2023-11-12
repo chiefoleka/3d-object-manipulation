@@ -11,15 +11,17 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def plot_loss(data, label=""):
-    losses = [l.item() for l in data]
-    epochs = range(1, len(losses) + 1)
+def plot_loss(train_loss, test_loss):
+    l_train = [l.item() for l in train_loss]
+    l_test = [l.item() for l in test_loss]
+    epochs = range(1, len(l_train) + 1)
 
     # Plot
-    plt.plot(epochs, losses, label=label)
+    plt.plot(epochs, l_train, label="Training")
+    plt.plot(epochs, l_test, label="Testing")
 
     # Add in a title and axes labels
-    plt.title(label)
+    plt.title("Train and Test Loss")
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
 
