@@ -1,6 +1,6 @@
 from consts.model_consts import ModelType
-from models.basic import BasicModel, BasicModelLarge
-from models.basic_norm import BasicModelNorm, BasicModelNormLarge
+from models.basic import BasicModel, BasicModelLarge, BasicModelExtraLarge
+from models.basic_norm import BasicModelNorm, BasicModelNormLarge, BasicModelNormExtraLarge
 
 
 class ModelFactory:
@@ -13,5 +13,9 @@ class ModelFactory:
             return BasicModelNorm(num_node_features, num_classes).to(device)
         elif className == ModelType.BASIC_MODEL_NORM_LARGE:
             return BasicModelNormLarge(num_node_features, num_classes).to(device)
+        elif className == ModelType.BASIC_MODEL_EXTRA_LARGE:
+            return BasicModelExtraLarge(num_node_features, num_classes).to(device)
+        elif className == ModelType.BASIC_MODEL_NORM_EXTRA_LARGE:
+            return BasicModelNormExtraLarge(num_node_features, num_classes).to(device)
         else:
             return BasicModel(num_node_features, num_classes).to(device)
