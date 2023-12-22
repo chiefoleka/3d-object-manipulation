@@ -24,8 +24,8 @@ def plot_loss(train_loss, test_loss):
 
     for loss in test_loss:
         value = loss.detach().numpy()
-        if value > 1:
-            value = 2
+        if value > 5:
+            value = 5
         l_test.append(value)
 
     epochs = range(1, len(l_train) + 1)

@@ -8,6 +8,7 @@ from models.factories.model_factories import ModelFactory
 from utils.config import config as get_config
 from utils.plotter import NumpyEncoder, plot_loss
 
+
 class Trainer:
     mean_loss = []
     mean_eval_loss = []
@@ -24,15 +25,21 @@ class Trainer:
             num_classes,
             device
         )
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.01, weight_decay=5e-4)
+
+        # Learning rate and weight decay
+        learning_rate = float(get_config("learning_rate"))
+        self.optimizer = torch.optim.Adam(self.model.parameters(
+        ), lr=learning_rate, weight_decay=5e-4)
         self.load_data(device)
-        
+
     def load_data(self, device):
         loader = Dataset()
         self.test_dataset = loader.load(get_config("test_path"))
         self.train_dataset = loader.load(get_config("train_path"))
-        self.train_data = DataLoader(self.train_dataset, batch_size=1, shuffle=True)
-        self.test_data = DataLoader(self.test_dataset, batch_size=1, shuffle=True)
+        self.train_data = DataLoader(
+            self.train_dataset, batch_size=1, shuffle=True)
+        self.test_data = DataLoader(
+            self.test_dataset, batch_size=1, shuffle=True)
 
         for data in self.train_data.dataset:
             data = data.to(device)
@@ -50,7 +57,8 @@ class Trainer:
             self.optimizer.zero_grad()
             out = self.model(data)
 
-            loss = F.l1_loss(out, data.y)
+            # reshape y to be 1x3. -1 infers the size of the dimension from the tensor
+            loss = F.l1_loss(out, data.y.view(1, -1))
             total_loss = total_loss + loss
             loss.backward()
             self.optimizer.step()
@@ -77,7 +85,8 @@ class Trainer:
         total_loss = 0
         for data in self.test_data:
             pred = self.model(data)
-            loss = F.l1_loss(pred, data.y)
+            # reshape y to be 1x3. -1 infers the size of the dimension from the tensor
+            loss = F.l1_loss(pred, data.y.view(1, -1))
             total_loss = total_loss + loss
             filename = data.filename[0]
 
@@ -90,22 +99,22 @@ class Trainer:
                 {
                     "epoch": epoch,
                     "agg_loss": loss.detach().numpy(),
-                    "predicted": o_np,
+                    "output": o_np,
                     "loss": [float(x) for x in [y_np[0] - o_np[0], y_np[1] - o_np[1], y_np[2] - o_np[2]]],
                     "expected": [float(x) for x in y_np],
                 }
             )
 
         return (total_loss / len(self.test_data.dataset))
-    
+
     def train_and_evaluate(self):
         epochs = int(get_config('epochs', 25))
         for epoch in range(epochs):
             train_loss = self.train_step(epoch)
             eval_loss = self.eval_step(epoch)
-        
-            self.mean_loss.append(train_loss / len(self.train_data.dataset))
-            self.mean_eval_loss.append(eval_loss / len(self.test_data.dataset))
+
+            self.mean_loss.append(train_loss)
+            self.mean_eval_loss.append(eval_loss)
 
         print("Final training loss", self.mean_loss[-1])
         print("Final evaluation loss", self.mean_eval_loss[-1])
@@ -118,6 +127,23 @@ class Trainer:
 
         with open(f"outputs/{timestr}_{model_type}_{epochs}_train_loss.json", "w") as f:
             json.dump(self.itemized_train_loss, f, cls=NumpyEncoder)
+
+        # write a csv file with the last value in each object of the loss
+        loss_objects = {
+            "train": self.itemized_train_loss,
+            "test": self.itemized_test_loss
+        }
+        for loss_name, loss_object in loss_objects.items():
+            with open(f"outputs/{timestr}_{model_type}_{epochs}_{loss_name}_loss.csv", "w") as f:
+                f.write("filename,agg_loss,loss,output,expected\n")
+                for filename, data in loss_object.items():
+                    last = data[-1]
+                    agg_loss = last["agg_loss"]
+                    loss = "|".join([str(x) for x in last["loss"]])
+                    output = "|".join([str(x) for x in last["output"]])
+                    expected = "|".join([str(x) for x in last["expected"]])
+                    f.write(f"{filename},{agg_loss},{loss},{output},{expected}\n")
+
 
 if __name__ == "__main__":
     trainer = Trainer()

@@ -15,7 +15,7 @@ This repository will hold the code for a 3D object manipulation project. The goa
 │   ├── basic_norm.py # Models designed to use a combination of x and norm values during training and evaluation
 │   ├── basic.py # Models only using x values during training and evaluation
 ├── training # entry point to train and evaluate the model
-├── converter
+├── utils
 │   ├── config.py # loads values of .env.ini and makes them available everywhere
 │   ├── logger.py
 │   ├── plotter.py # plots the output of training and evaluation
