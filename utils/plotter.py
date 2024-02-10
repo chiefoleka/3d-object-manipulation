@@ -18,8 +18,8 @@ def plot_loss(train_loss, test_loss):
 
     for loss in train_loss:
         value = loss.detach().numpy()
-        if value > 1:
-            value = 2
+        if value > 5:
+            value = 5
         l_train.append(value)
 
     for loss in test_loss:

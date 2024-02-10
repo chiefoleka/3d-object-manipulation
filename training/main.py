@@ -151,6 +151,6 @@ class Trainer:
 
 if __name__ == "__main__":
     trainer = Trainer()
-    # trainer.train_and_evaluate()
+    trainer.train_and_evaluate()
 
     plot_loss(trainer.mean_loss, trainer.mean_eval_loss)

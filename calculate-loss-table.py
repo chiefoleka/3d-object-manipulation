@@ -1,11 +1,12 @@
 import json
 import os
 
-# Add the files to plot and the respective models in the arrays below
-files_train = []
-files_test = []
+# Add the files to plot (the json output of the training loss) and the respective models in the arrays below
+files_test = [
+    "20240210_230645_basicmodel_1000_test_loss.json"
+]
 files_name = [
-    # 'BasicModel',
+    'BasicModel',
     # 'BasicModelNorm',
     # 'BasicModelLarge',
     # 'BasicModelNormLarge',
@@ -75,7 +76,7 @@ with open("final_result_800.csv", "w") as f:
 
 with open("final_result_1000.csv", "w") as f:
     model_names_csv = ",".join(files_name)
-    f.write(f"Object name {model_names_csv}\n")
+    f.write(f"Object name,{model_names_csv}\n")
     for filename, loss in csv_epoch_1000.items():
         loss_csv = ",".join([str(x) for x in loss])
         f.write(f"{filename},{loss_csv}\n")
