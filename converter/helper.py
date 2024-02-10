@@ -1,5 +1,7 @@
 import os
 
+from utils.config import config as get_config
+
 
 class Helper:
     @staticmethod
@@ -18,7 +20,7 @@ class Helper:
 
     @staticmethod
     def ensure_file_exists(
-        input_filename, output_filename=None, output_subdir="obj", format="obj"
+        input_filename, output_filename=None, output_subdir=get_config("output_subdir"), format="obj"
     ):
         if output_filename is None:
             head, tail = os.path.split(input_filename)

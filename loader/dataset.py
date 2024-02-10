@@ -3,6 +3,7 @@ import csv
 
 from converter.binary_to_obj import BinaryToObj
 from converter.stl_to_graph import StlToGraph
+from utils.config import config as get_config
 
 
 class Dataset:
@@ -51,6 +52,12 @@ class Dataset:
     def load(self, directory: str):
         dataset_list = []
         self.load_params(directory)
+
+        # ensure the obj directory exists so we can save the files
+        output_subdir = get_config("output_subdir")
+        full_path = os.path.join(directory, output_subdir)
+        os.makedirs(full_path, exist_ok=True)
+
         # Iterate over all files in the directory
         for filename in os.listdir(directory):
             if os.path.join(directory, filename) == os.path.join(

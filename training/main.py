@@ -34,6 +34,7 @@ class Trainer:
         self.load_data(device)
 
     def load_data(self, device):
+        # load the data, converting STL binary to Graph
         loader = Dataset()
         self.test_dataset = loader.load(get_config("test_path"))
         self.train_dataset = loader.load(get_config("train_path"))
@@ -150,6 +151,6 @@ class Trainer:
 
 if __name__ == "__main__":
     trainer = Trainer()
-    trainer.train_and_evaluate()
+    # trainer.train_and_evaluate()
 
     plot_loss(trainer.mean_loss, trainer.mean_eval_loss)
