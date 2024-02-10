@@ -21,13 +21,12 @@ class Helper:
         input_filename, output_filename=None, output_subdir="obj", format="obj"
     ):
         if output_filename is None:
-            input_paths = input_filename.split("/")
-            output_paths = input_paths[:-1]
-            output_paths.append(output_subdir)
+            head, tail = os.path.split(input_filename)
+            output_path = os.path.join(head, output_subdir)
 
             # create the new file in obj path
-            filename = input_paths[-1].split(".")[0]
-            output_paths.append(f"{filename}.{format}")
-            output_filename = "/".join(output_paths)
+            filename = tail.split(".")[0]
+            full_filename = f"{filename}.{format}"
+            output_filename = os.path.join(output_path, full_filename)
 
         return output_filename

@@ -1,3 +1,4 @@
+import os
 import time
 import json
 import torch
@@ -116,16 +117,18 @@ class Trainer:
             self.mean_loss.append(train_loss)
             self.mean_eval_loss.append(eval_loss)
 
+            print("Training and eval for epoch:", epoch, "/ train loss:", train_loss.detach().numpy(), "/ eval loss:", eval_loss.detach().numpy())
+
         print("Final training loss", self.mean_loss[-1])
         print("Final evaluation loss", self.mean_eval_loss[-1])
 
         timestr = time.strftime("%Y%m%d_%H%M%S")
         model_type = get_config("model_type").lower()
 
-        with open(f"outputs/{timestr}_{model_type}_{epochs}_test_loss.json", "w") as f:
+        with open(os.path.join("outputs", f"{timestr}_{model_type}_{epochs}_test_loss.json"), "w") as f:
             json.dump(self.itemized_test_loss, f, cls=NumpyEncoder)
 
-        with open(f"outputs/{timestr}_{model_type}_{epochs}_train_loss.json", "w") as f:
+        with open(os.path.join("outputs", f"{timestr}_{model_type}_{epochs}_train_loss.json"), "w") as f:
             json.dump(self.itemized_train_loss, f, cls=NumpyEncoder)
 
         # write a csv file with the last value in each object of the loss
@@ -134,7 +137,7 @@ class Trainer:
             "test": self.itemized_test_loss
         }
         for loss_name, loss_object in loss_objects.items():
-            with open(f"outputs/{timestr}_{model_type}_{epochs}_{loss_name}_loss.csv", "w") as f:
+            with open(os.path.join("outputs", f"{timestr}_{model_type}_{epochs}_{loss_name}_loss.csv"), "w") as f:
                 f.write("filename,agg_loss,loss,output,expected\n")
                 for filename, data in loss_object.items():
                     last = data[-1]

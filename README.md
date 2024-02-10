@@ -26,7 +26,7 @@ This repository will hold the code for a 3D object manipulation project. The goa
 ## Setup with Anaconda
 If you have Anaconda installed, [create and activate a virtual environment](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
 ```bash
-conda create --name 3d-object
+conda create --name 3d-object pip
 conda activate 3d-object
 ```
 
@@ -37,15 +37,25 @@ python -m venv venv
 source venv/bin/activate
 ```
 
+On Windows
+```bash
+.\venv\Scripts\activate
+```
+
 Install all the needed packages
 ```bash
 pip install -r requirements.txt
 ```
-> 🛑 As at the time of writing this project, pytorch3d fails installation using pip. My guess is that the failing build resulted in this issue. I had to build pytorch3d from source using the `v0.7.3` version.
+> 🛑 As at the time of writing this project, pytorch3d and torch-scatter fails installation using the requirements file. This has to do with changes to how they are packaged and shipped.
 
-Build `pytorch3d` from source:
+Install `torch-scatter` (as it fails to find torch when bundled together - dep management is weird it seems):
 ```bash
-pip install pytorch3d @ "git+https://github.com/facebookresearch/pytorch3d.git@35badc0892275c35818ca39800ec55d9c7342c8f"
+pip install torch-scatter
+```
+
+Install `pytorch3d`:
+```bash
+pip install "git+https://github.com/facebookresearch/pytorch3d.git"
 ```
 
 Copy the env file sample and configure it as needed
