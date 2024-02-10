@@ -1,3 +1,4 @@
+import os
 import re
 import torch
 import numpy
@@ -28,7 +29,8 @@ class StlToGraph:
         faces = generated_mesh.faces_packed()
 
         # x will be the position of each vertex (node)
-        filename = obj_file.split("/")[-1].split(".")[0]
+        _, tail = os.path.split(obj_file)
+        filename = tail.split(".")[0]
 
         """
         first, for each vertices, find corresponding faces (all the faces that have this
