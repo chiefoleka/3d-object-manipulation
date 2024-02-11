@@ -66,7 +66,16 @@ cp .env.sample.ini .env.ini
 ## Run the project
 ```bash
 python setup.py install
+```
+
+On Unix systems:
+```bash
 python training/main.py
+```
+
+On Windows systems:
+```bash
+python training\main.py
 ```
 
 You can view the STL or generated OBJ file using [3dviewer.net](https://3dviewer.net).
