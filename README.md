@@ -80,4 +80,8 @@ python training\main.py
 
 You can view the STL or generated OBJ file using [3dviewer.net](https://3dviewer.net).
 
+> **NOTE: 💡**
+>
+> If you make any change to the code, always run `python setup.py install` to rebuild the project before running it again.
+
 Enjoy!
