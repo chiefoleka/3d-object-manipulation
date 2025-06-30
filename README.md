@@ -1,5 +1,12 @@
-# 3d-object-manipulation
+# Graph Convolutional Networks for Predicting Mechanical Characteristics of 3D Lattice Structures
+
 This repository will hold the code for a 3D object manipulation project. The goal of this project is to take 3D objects and describe the features of the object using ML.
+
+For All use of the data, please `cite` the following:
+
+_Oleka, Valentine, Seyyed Mohsen Zahedi, Aboozar Taherkhani, Reza Baserinia, S. Abolfazl Zahedi, and Shengxiang Yang. "Graph Convolutional Networks for Predicting Mechanical Characteristics of 3D Lattice Structures." In International Conference on Intelligent Information Processing, pp. 150-160. Cham: Springer Nature Switzerland, 2024_.
+
+The paper is available at: [Graph Convolutional Networks for Predicting Mechanical Characteristics of 3D Lattice Structures | SpringerLink](https://link.springer.com/chapter/10.1007/978-3-031-57919-6_11#citeas).
 
 ## Structure
 ```bash
